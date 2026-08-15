@@ -1,6 +1,6 @@
 # Databricks HLS Data Model Explorer
 
-An interactive Databricks App for exploring Health and Life Sciences entity-relationship models. It includes Veeva CRM, pharmacovigilance, quality, clinical, Salesforce Health Cloud, NetSuite accounting, and HEDIS examples.
+An interactive Databricks App for exploring Health and Life Sciences and Consumer Packaged Goods entity-relationship models. It includes Veeva CRM, pharmacovigilance, quality, clinical, Salesforce Health Cloud, NetSuite accounting, HEDIS, and Walmart Scintilla Cloud Feeds examples.
 
 The application is a lightweight Flask server with a static Mermaid-based UI. It does not copy or query customer data. When configured, entity cards link users to the matching tables in Unity Catalog.
 
@@ -10,6 +10,7 @@ The application is a lightweight Flask server with a static Mermaid-based UI. It
 - Links from entities to Unity Catalog tables
 - Optional links to AI/BI Genie spaces
 - Four NetSuite SuiteAnalytics models: Revenue Recognition, Invoice with Amortization, Expense Amortization, and General Accounting
+- Seven Walmart Scintilla models: Sales & Demand, Inventory & Availability, Item/Store/Assortment, Supply Chain, Forecasting, E-commerce, and Pricing/Funding
 - A portable Databricks Apps deployment script
 
 The included schemas are illustrative metadata models. Validate them against your licensed source-system metadata and your Unity Catalog schemas before production use. No credentials or customer records are included.
@@ -40,7 +41,13 @@ window.HLS_DATA_MODEL_CONFIG = {
     safety: { catalog: "main", schema: "pharmacovigilance" },
     quality: { catalog: "main", schema: "quality_qms" },
     clinical: { catalog: "main", schema: "clinical_ctms" },
-    netsuite: { catalog: "main", schema: "netsuite" }
+    netsuite: { catalog: "main", schema: "netsuite" },
+    scintilla: {
+      workspaceUrl: "https://fevm-cpg-bricks.cloud.databricks.com",
+      orgId: "7474656551084241",
+      catalog: "cpg_bricks_catalog",
+      schema: "scintilla_us_cloudfeeds"
+    }
   }
 };
 ```

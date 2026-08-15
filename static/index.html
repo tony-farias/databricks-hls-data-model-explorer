@@ -227,16 +227,18 @@ const UC_ORG = APP_CFG.orgId || "";
 const modelCfg = (key) => (APP_CFG.models || {})[key] || {};
 const catalogBase = (key) => {
   const c = modelCfg(key);
-  if (!APP_CFG.workspaceUrl || !c.catalog || !c.schema) return "#";
-  return APP_CFG.workspaceUrl.replace(/\/$/, "") + "/explore/data/" +
+  const workspaceUrl = c.workspaceUrl || APP_CFG.workspaceUrl;
+  if (!workspaceUrl || !c.catalog || !c.schema) return "#";
+  return workspaceUrl.replace(/\/$/, "") + "/explore/data/" +
     encodeURIComponent(c.catalog) + "/" + encodeURIComponent(c.schema) + "/";
 };
+const orgIdFor = (key) => modelCfg(key).orgId || UC_ORG;
 const schemaLabel = (key, fallback) => {
   const c = modelCfg(key);
   return c.catalog && c.schema ? c.catalog + ".`" + c.schema + "`" : fallback;
 };
-const ucUrlFor = (base, t) => base === "#" ? "#" :
-  base + encodeURIComponent(t) + (UC_ORG ? "?o=" + encodeURIComponent(UC_ORG) : "");
+const ucUrlFor = (base, t, orgId = UC_ORG) => base === "#" ? "#" :
+  base + encodeURIComponent(t) + (orgId ? "?o=" + encodeURIComponent(orgId) : "");
 
 mermaid.initialize({
   startOnLoad: false,
@@ -260,7 +262,7 @@ function makeEntitiesClickable(container, model) {
     const name = label.textContent.trim();
     if (!model.data.tables[name]) return;
     g.classList.add("uc-link");
-    g.addEventListener("click", () => window.open(ucUrlFor(model.ucBase, name), "_blank"));
+    g.addEventListener("click", () => window.open(ucUrlFor(model.ucBase, name, model.ucOrg), "_blank"));
     const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.textContent = "Open " + name + " in Unity Catalog";
     g.appendChild(title);
@@ -308,10 +310,13 @@ const NS_ACCENT = "#C74634", NS_ACCENT_BG = "#FBEAE7";  // Oracle Redwood red
 const NS_LOGO = '<span class="tablogo" style="color:#C74634;font-weight:800;font-size:12.5px;letter-spacing:-0.03em;" aria-hidden="true">NetSuite</span>';
 const HEDIS_ACCENT = "#0E9C8A", HEDIS_ACCENT_BG = "#E4F6F3";  // HLS teal (mixed-source model)
 const HEDIS_LOGO = '<span class="tablogo" style="color:#0E9C8A;font-weight:800;font-size:12.5px;letter-spacing:-0.02em;" aria-hidden="true">HEDIS</span>';
+const SCINTILLA_ACCENT = "#0071CE", SCINTILLA_ACCENT_BG = "#E6F2FA";
+const SCINTILLA_LOGO = '<span class="tablogo" style="color:#0071CE;font-weight:800;font-size:12px;letter-spacing:-0.03em;" aria-hidden="true">Walmart</span>';
 function brandOf(m) {
   if (m.source === "salesforce") return { accent: SF_ACCENT, bg: SF_ACCENT_BG, logo: SF_LOGO };
   if (m.source === "netsuite")   return { accent: NS_ACCENT, bg: NS_ACCENT_BG, logo: NS_LOGO };
   if (m.source === "hedis")      return { accent: HEDIS_ACCENT, bg: HEDIS_ACCENT_BG, logo: HEDIS_LOGO };
+  if (m.source === "scintilla")  return { accent: SCINTILLA_ACCENT, bg: SCINTILLA_ACCENT_BG, logo: SCINTILLA_LOGO };
   return { accent: VEEVA_ACCENT, bg: VEEVA_ACCENT_BG, logo: VEEVA_LOGO };
 }
 
@@ -386,6 +391,41 @@ const MODELS = [
     // Ingestion demo lives in demos/hedis-quality/ (Auto Loader files + Data Cloud dims).
     // Optional: wire a Genie space per domain here once created.
     genieByDomain: {}
+  },
+  {
+    tabId: "tab-cpg-sales", tabLabel: "Sales & Demand", data: SCINTILLA_SALES_DEMAND,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "store_sales, omni_sales"
+  },
+  {
+    tabId: "tab-cpg-inventory", tabLabel: "Inventory & Availability", data: SCINTILLA_INVENTORY,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "store_invt, oos_root_cause"
+  },
+  {
+    tabId: "tab-cpg-assortment", tabLabel: "Item, Store & Assortment", data: SCINTILLA_ASSORTMENT,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "item_dim, modular_plan"
+  },
+  {
+    tabId: "tab-cpg-supply-chain", tabLabel: "Supply Chain", data: SCINTILLA_SUPPLY_CHAIN,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "purchase_order, omni_otif"
+  },
+  {
+    tabId: "tab-cpg-forecasting", tabLabel: "Forecasting", data: SCINTILLA_FORECASTING,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "dly_dmnd_fcst, store_demand_forecast"
+  },
+  {
+    tabId: "tab-cpg-ecommerce", tabLabel: "E-commerce", data: SCINTILLA_ECOMMERCE,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "ecom_invt, digital_transactability"
+  },
+  {
+    tabId: "tab-cpg-pricing", tabLabel: "Pricing & Funding", data: SCINTILLA_PRICING_FUNDING,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "sku_mumd, coops"
   }
 ];
 
@@ -415,6 +455,10 @@ function buildTab(model, isFirst) {
       ? 'These relationships follow the official SuiteAnalytics Connect business models for Revenue Recognition, ' +
         'Invoice with Amortization, Expense Amortization and General Accounting. Click any entity box or index chip ' +
         'to open the corresponding configured Unity Catalog table.'
+      : model.source === "scintilla"
+      ? 'These models use Walmart Scintilla US Cloud Feeds metadata from <code>cpg_bricks_catalog.scintilla_us_cloudfeeds</code>. ' +
+        'Relationships are curated logical joins and are shown only when the join column exists on both tables. ' +
+        'Validate join grain and supplier-specific feed entitlements before production use.'
       : 'Relationships are inferred from Veeva naming conventions: a column named ' +
         '<code>foo__v</code> on table <code>bar__v</code> is treated as a reference to table <code>foo__v</code> when that ' +
         'table exists in the schema. Edge labels name the referencing column. Audit columns (<code>created_by__v</code>, ' +
@@ -437,7 +481,7 @@ function buildTab(model, isFirst) {
   const grid = main.querySelector(".index-grid");
   Object.keys(D.tables).sort().forEach((t) => {
     const a = document.createElement("a");
-    a.className = "chip"; a.href = ucUrlFor(model.ucBase, t); a.target = "_blank"; a.dataset.name = t;
+    a.className = "chip"; a.href = ucUrlFor(model.ucBase, t, model.ucOrg); a.target = "_blank"; a.dataset.name = t;
     a.innerHTML = "<span>" + t + "</span><span class='meta'>" + D.tables[t].cols + " cols</span>";
     grid.appendChild(a);
   });
@@ -639,9 +683,11 @@ setTimeout(async () => {
   const setupTab = params.get('tab') || params.get('setup');
 
   if (!setupTab) return; // No setup needed
-  if (!MODELS || !MODELS.some(m => m.tabId === setupTab)) return; // Invalid tab
+  const setupModel = MODELS && MODELS.find(m => m.tabId === setupTab);
+  if (!setupModel) return; // Invalid tab
 
   try {
+    applyIndustry(setupModel.industry || "hls");
     // Activate the requested tab
     activateTab(setupTab);
     await new Promise(r => setTimeout(r, 1000)); // Wait for tab switch

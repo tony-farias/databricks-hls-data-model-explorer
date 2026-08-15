@@ -11,6 +11,12 @@ window.HLS_DATA_MODEL_CONFIG = {
     quality: { catalog: "main", schema: "quality_qms" },
     clinical: { catalog: "main", schema: "clinical_ctms" },
     netsuite: { catalog: "main", schema: "netsuite" },
+    scintilla: {
+      workspaceUrl: "https://fevm-cpg-bricks.cloud.databricks.com",
+      orgId: "7474656551084241",
+      catalog: "cpg_bricks_catalog",
+      schema: "scintilla_us_cloudfeeds"
+    },
 
     // Optional domain-to-Genie mappings. Example:
     // safety: {
