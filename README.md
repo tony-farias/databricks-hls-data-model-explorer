@@ -11,6 +11,7 @@ The application is a lightweight Flask server with a static Mermaid-based UI. It
 - Optional links to AI/BI Genie spaces
 - Four NetSuite SuiteAnalytics models: Revenue Recognition, Invoice with Amortization, Expense Amortization, and General Accounting
 - Seven Walmart Scintilla models: Sales & Demand, Inventory & Availability, Item/Store/Assortment, Supply Chain, Forecasting, E-commerce, and Pricing/Funding
+- A downloadable `deploy-monday-morning-scintilla` skill that inventories customer Cloud Feeds and plans a portable Monday Morning deployment
 - A portable Databricks Apps deployment script
 
 The included schemas are illustrative metadata models. Validate them against your licensed source-system metadata and your Unity Catalog schemas before production use. No credentials or customer records are included.

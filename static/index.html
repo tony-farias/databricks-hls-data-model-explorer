@@ -320,6 +320,21 @@ function brandOf(m) {
   return { accent: VEEVA_ACCENT, bg: VEEVA_ACCENT_BG, logo: VEEVA_LOGO };
 }
 
+// Consolidated source footprint for recreating the Monday Morning retail app.
+const SCINTILLA_MONDAY_MORNING = (() => {
+  const parts = [SCINTILLA_SALES_DEMAND, SCINTILLA_INVENTORY, SCINTILLA_ASSORTMENT,
+    SCINTILLA_SUPPLY_CHAIN, SCINTILLA_FORECASTING, SCINTILLA_ECOMMERCE, SCINTILLA_PRICING_FUNDING];
+  const tables = Object.assign({}, ...parts.map((p) => p.tables));
+  const domains = parts.flatMap((p) => p.domains).map((d) => ({
+    ...d,
+    blurb: d.blurb + " Included in the downloadable customer-deployment skill, which inventories licensed feeds before enabling this capability."
+  }));
+  return {
+    domains, tables, hubRefs: {},
+    totals: { tables: Object.keys(tables).length, edges: domains.reduce((n, d) => n + d.edges, 0) }
+  };
+})();
+
 // ---- model registry: one tab per data model ----
 const MODELS = [
   {
@@ -426,6 +441,14 @@ const MODELS = [
     tabId: "tab-cpg-pricing", tabLabel: "Pricing & Funding", data: SCINTILLA_PRICING_FUNDING,
     industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
     schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "sku_mumd, coops"
+  },
+  {
+    tabId: "tab-cpg-monday-morning", tabLabel: "Monday Morning App Kit", data: SCINTILLA_MONDAY_MORNING,
+    industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
+    schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"),
+    example: "store_sales, store_invt, dly_dmnd_fcst",
+    genieByDomain: Object.fromEntries(SCINTILLA_MONDAY_MORNING.domains.map((d) =>
+      [d.name, "/deploy-monday-morning-scintilla.zip"]))
   }
 ];
 

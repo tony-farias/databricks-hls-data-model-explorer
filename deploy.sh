@@ -23,6 +23,7 @@ RUNTIME_FILES=(
   static/data.js
   static/config.js
   static/genieflow-logo.png
+  static/deploy-monday-morning-scintilla.zip
 )
 
 echo "Uploading app files to ${WORKSPACE_PATH}"
