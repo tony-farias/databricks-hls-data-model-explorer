@@ -29,8 +29,10 @@ RUNTIME_FILES=(
 echo "Uploading app files to ${WORKSPACE_PATH}"
 databricks workspace mkdirs "${WORKSPACE_PATH}/static" --profile "$PROFILE"
 for file in "${RUNTIME_FILES[@]}"; do
+  format="AUTO"
+  [[ "$file" == *.zip ]] && format="RAW"
   databricks workspace import "${WORKSPACE_PATH}/${file}" \
-    --file "$file" --format AUTO --overwrite --profile "$PROFILE"
+    --file "$file" --format "$format" --overwrite --profile "$PROFILE"
 done
 
 if ! databricks apps get "$APP_NAME" --profile "$PROFILE" >/dev/null 2>&1; then
