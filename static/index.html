@@ -47,7 +47,7 @@
   .eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 11px; font-weight: 700; color: var(--accent); }
   h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.015em; margin: 6px 0 2px; }
   .sub { font-size: 13px; color: var(--ink-2); font-family: "SF Mono", Menlo, Consolas, monospace; }
-  nav.tabs { display: flex; gap: 4px; margin-top: 16px; }
+  nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 16px; }
   nav.tabs button {
     appearance: none; border: 1px solid var(--line); border-bottom: none; background: var(--bg);
     color: var(--ink-2); font: inherit; font-size: 13.5px; font-weight: 600;
@@ -59,6 +59,17 @@
   nav.tabs button .tablogo { margin-right: 7px; vertical-align: -2px; }
   nav.tabs button .vlogo { margin-right: 7px; color: #FF7A00; font-weight: 800; font-size: 12.5px; letter-spacing: -0.04em; }
   nav.tabs button.active { color: var(--accent); }
+  nav.tabs button.featured {
+    background: #0071CE; border-color: #0071CE; color: #fff; font-weight: 800;
+    box-shadow: 0 4px 12px rgba(0, 113, 206, 0.22);
+  }
+  nav.tabs button.featured.active { background: #005A9E; color: #fff; }
+  .skill-download {
+    display: inline-flex; align-items: center; gap: 7px; margin-left: auto; padding: 9px 14px;
+    border-radius: 8px; background: #0071CE; color: #fff; font-size: 13px; font-weight: 800;
+    text-decoration: none; white-space: nowrap;
+  }
+  .skill-download:hover { background: #005A9E; }
   .erd-jump-wrap { margin-left: auto; align-self: center; padding-bottom: 8px; display: inline-flex; align-items: center; gap: 8px; }
   .erd-jump-wrap label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); }
   #erd-jump {
@@ -443,10 +454,11 @@ const MODELS = [
     schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"), example: "sku_mumd, coops"
   },
   {
-    tabId: "tab-cpg-monday-morning", tabLabel: "Monday Morning App Kit", data: SCINTILLA_MONDAY_MORNING,
+    tabId: "tab-cpg-monday-morning", tabLabel: "Monday Morning App", data: SCINTILLA_MONDAY_MORNING,
     industry: "cpg", source: "scintilla", ucBase: catalogBase("scintilla"), ucOrg: orgIdFor("scintilla"),
     schemaLabel: schemaLabel("scintilla", "Configure Scintilla catalog/schema in config.js"),
     example: "store_sales, store_invt, dly_dmnd_fcst",
+    skillDownload: "/deploy-monday-morning-scintilla.zip",
     genieByDomain: Object.fromEntries(SCINTILLA_MONDAY_MORNING.domains.map((d) =>
       [d.name, "/deploy-monday-morning-scintilla.zip"]))
   }
@@ -462,6 +474,7 @@ function buildTab(model, isFirst) {
     '<div class="toolbar">' +
       '<input type="search" class="search" placeholder="Filter ' + D.totals.tables + ' tables… (e.g. ' + model.example + ')" autocomplete="off" />' +
       '<span class="count search-count"></span><span class="toc"></span>' +
+      (model.skillDownload ? '<a class="skill-download" href="' + model.skillDownload + '" download>✦ Download Monday Morning Skill</a>' : '') +
     '</div>' +
     '<div class="legend">' +
       '<span class="item"><span class="swatch" style="background: oklch(0.80 0.10 300);"></span> Schema table, click to open in Unity Catalog</span>' +
@@ -631,6 +644,7 @@ MODELS.forEach((m, idx) => {
   btn.style.setProperty("--accent", b.accent);
   btn.innerHTML = b.logo + "<span>" + m.tabLabel + " — " + m.data.totals.tables + " tables</span>";
   if (idx === 0) btn.classList.add("active");
+  if (m.skillDownload) btn.classList.add("featured");
   btn.addEventListener("click", () => activateTab(m.tabId));
   tabsNav.insertBefore(btn, jumpWrap);
   tabsContainer.appendChild(buildTab(m, idx === 0));
